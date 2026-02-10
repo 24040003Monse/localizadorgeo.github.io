@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoLocator - Explorando la Geolocalización</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Jost:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <!-- Pantalla de Login -->
+    <div id="login-screen" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1 class="login-title">GeoLocator</h1>
+                <p class="login-subtitle">Sistema de Autenticación</p>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username">👤 Usuario</label>
+                    <input type="text" id="username" name="username" placeholder="Ingresa tu usuario" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">🔒 Contraseña</label>
+                    <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required>
+                </div>
+                
+                <button type="submit" class="login-btn">
+                    <span>Iniciar Sesión</span>
+                </button>
+                
+                <div id="login-error" class="error-message"></div>
+            </form>
+            
+            <div class="login-info">
+                <p>💡 <strong>Credenciales de prueba:</strong></p>
+                <p>Usuario: <code>admin</code> | Contraseña: <code>geo2024</code></p>
+                <p>Usuario: <code>usuario</code> | Contraseña: <code>123456</code></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aplicación Principal (oculta inicialmente) -->
+    <div id="main-app" class="main-app" style="display: none;">
+        <header>
+            <div class="container">
+                <div class="header-content">
+                    <div>
+                        <h1>GeoLocator</h1>
+                        <p class="subtitle">Tecnología de Ubicación Avanzada</p>
+                    </div>
+                    <div class="user-section">
+                        <span class="user-name" id="user-name"></span>
+                        <button class="logout-btn" onclick="logout()">🚪 Cerrar Sesión</button>
+                    </div>
+                </div>
+                <nav>
+                    <button class="nav-btn active" data-section="inicio">🏠 Inicio</button>
+                    <button class="nav-btn" data-section="que-es">📍 ¿Qué es?</button>
+                    <button class="nav-btn" data-section="tipos">🔍 Tipos</button>
+                    <button class="nav-btn" data-section="aplicaciones">📱 Aplicaciones</button>
+                    <button class="nav-btn" data-section="api">🔑 API</button>
+                    <button class="nav-btn" data-section="clave-api">⚙️ Generar Clave</button>
+                    <button class="nav-btn" data-section="mapa">🗺️ Mapa Interactivo</button>
+                </nav>
+            </div>
+        </header>
+
+        <main class="container">
+            <!-- Sección Inicio -->
+            <section id="inicio" class="section active">
+                <div class="content-card">
+                    <h2>Bienvenido a GeoLocator</h2>
+                    <p>Explora el fascinante mundo de la geolocalización, una tecnología que ha revolucionado la forma en que interactuamos con el espacio y la ubicación en nuestro planeta.</p>
+                    
+                    <div class="highlight-box">
+                        <p><strong>🌍 La geolocalización</strong> es la capacidad de obtener la ubicación geográfica real de un dispositivo conectado a internet, permitiendo identificar su posición exacta en términos de latitud y longitud.</p>
+                    </div>
+
+                    <p>En este sitio encontrarás información completa sobre:</p>
+                    
+                    <div class="app-grid">
+                        <div class="app-card">
+                            <div class="app-icon">📍</div>
+                            <h4>Conceptos Básicos</h4>
+                            <p>Entiende qué es la geolocalización</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">🛰️</div>
+                            <h4>Tipos de Geolocalización</h4>
+                            <p>GPS, WiFi, IP y más</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">💡</div>
+                            <h4>Aplicaciones Reales</h4>
+                            <p>Casos de uso en el mundo real</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">🔧</div>
+                            <h4>APIs y Desarrollo</h4>
+                            <p>Implementación técnica</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">🗺️</div>
+                            <h4>Mapa Interactivo</h4>
+                            <p>Visualiza ubicaciones en tiempo real</p>
+                        </div>
+                    </div>
+
+                    <p style="text-align: center; margin-top: 3rem; font-size: 1.2rem;">
+                        <strong>👆 Utiliza el menú de navegación superior para explorar cada sección</strong>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Sección ¿Qué es Geolocalización? -->
+            <section id="que-es" class="section">
+                <div class="content-card">
+                    <h2>¿Qué es la Geolocalización?</h2>
+                    
+                    <p>La <strong>geolocalización</strong> es el proceso de identificar la ubicación geográfica real de un objeto, como un dispositivo móvil, computadora, vehículo o cualquier otro dispositivo conectado a internet.</p>
+
+                    <div class="highlight-box">
+                        <h3>Definición Técnica</h3>
+                        <p>La geolocalización utiliza diversas tecnologías para determinar la posición física de un dispositivo en coordenadas geográficas (latitud y longitud), permitiendo su representación en mapas digitales y el desarrollo de servicios basados en ubicación.</p>
+                    </div>
+
+                    <h3>Componentes Fundamentales</h3>
+                    <p>La geolocalización se basa en tres componentes principales:</p>
+
+                    <div class="app-grid">
+                        <div class="app-card">
+                            <div class="app-icon">📡</div>
+                            <h4>Señales</h4>
+                            <p>Satélites GPS, torres celulares, redes WiFi que emiten señales de referencia</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">📱</div>
+                            <h4>Receptores</h4>
+                            <p>Dispositivos con capacidad de recibir y procesar señales de ubicación</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">🧮</div>
+                            <h4>Algoritmos</h4>
+                            <p>Cálculos matemáticos que determinan la posición exacta basándose en las señales recibidas</p>
+                        </div>
+                    </div>
+
+                    <h3>Precisión y Exactitud</h3>
+                    <p>La precisión de la geolocalización varía según la tecnología utilizada:</p>
+                    <ul style="color: var(--text); font-size: 1.1rem; line-height: 2; margin-left: 2rem;">
+                        <li><strong>GPS Militar:</strong> Precisión de hasta 1 metro</li>
+                        <li><strong>GPS Civil:</strong> Precisión de 5-10 metros</li>
+                        <li><strong>WiFi:</strong> Precisión de 10-50 metros en áreas urbanas</li>
+                        <li><strong>Triangulación Celular:</strong> Precisión de 50-500 metros</li>
+                        <li><strong>Geolocalización por IP:</strong> Precisión de ciudad o región</li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <h3>Importancia en la Era Digital</h3>
+                        <p>La geolocalización se ha convertido en una tecnología fundamental que impulsa servicios como navegación GPS, redes sociales basadas en ubicación, comercio electrónico localizado, servicios de emergencia, logística y transporte, marketing dirigido y realidad aumentada.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección Tipos -->
+            <section id="tipos" class="section">
+                <div class="content-card">
+                    <h2>Tipos de Geolocalización más Utilizados</h2>
+                    
+                    <p>Existen diversos métodos de geolocalización, cada uno con sus propias características, ventajas y casos de uso específicos.</p>
+
+                    <h3>1. GPS (Sistema de Posicionamiento Global)</h3>
+                    <div class="highlight-box">
+                        <p><strong>🛰️ Descripción:</strong> Sistema de navegación por satélite que proporciona información de ubicación precisa en cualquier parte del mundo.</p>
+                        <p><strong>Precisión:</strong> 5-10 metros en condiciones ideales</p>
+                        <p><strong>Ventajas:</strong> Alta precisión, cobertura global, funciona sin conexión a internet</p>
+                        <p><strong>Desventajas:</strong> Consume mucha batería, funciona mal en interiores</p>
+                        <p><strong>Uso común:</strong> Navegación vehicular, rastreo de activos, deportes y actividades al aire libre</p>
+                    </div>
+
+                    <h3>2. A-GPS (GPS Asistido)</h3>
+                    <div class="highlight-box">
+                        <p><strong>📡 Descripción:</strong> Mejora del GPS tradicional que utiliza datos de redes celulares para acelerar el tiempo de adquisición de señal satelital.</p>
+                        <p><strong>Precisión:</strong> 5-50 metros</p>
+                        <p><strong>Ventajas:</strong> Localización más rápida, mejor rendimiento en áreas urbanas densas</p>
+                        <p><strong>Desventajas:</strong> Requiere conexión a red celular, puede generar costos de datos</p>
+                        <p><strong>Uso común:</strong> Smartphones, servicios de emergencia E911</p>
+                    </div>
+
+                    <h3>3. Geolocalización por WiFi</h3>
+                    <div class="highlight-box">
+                        <p><strong>📶 Descripción:</strong> Determina la ubicación mediante la triangulación de señales de puntos de acceso WiFi cercanos.</p>
+                        <p><strong>Precisión:</strong> 10-50 metros en zonas urbanas</p>
+                        <p><strong>Ventajas:</strong> Funciona en interiores, bajo consumo de energía, no requiere GPS</p>
+                        <p><strong>Desventajas:</strong> Limitado a áreas con cobertura WiFi, precisión variable</p>
+                        <p><strong>Uso común:</strong> Centros comerciales, aeropuertos, navegación indoor</p>
+                    </div>
+
+                    <h3>4. Triangulación de Antenas Celulares</h3>
+                    <div class="highlight-box">
+                        <p><strong>📱 Descripción:</strong> Calcula la posición basándose en la señal de múltiples torres de telefonía celular.</p>
+                        <p><strong>Precisión:</strong> 50-500 metros según densidad de antenas</p>
+                        <p><strong>Ventajas:</strong> Funciona con cualquier teléfono móvil, no requiere GPS ni WiFi</p>
+                        <p><strong>Desventajas:</strong> Baja precisión, depende de la densidad de antenas</p>
+                        <p><strong>Uso común:</strong> Servicios de emergencia, rastreo básico de dispositivos</p>
+                    </div>
+
+                    <h3>5. Geolocalización por Dirección IP</h3>
+                    <div class="highlight-box">
+                        <p><strong>🌐 Descripción:</strong> Estima la ubicación geográfica de un dispositivo basándose en su dirección IP de internet.</p>
+                        <p><strong>Precisión:</strong> Ciudad o región (50-200 km)</p>
+                        <p><strong>Ventajas:</strong> No requiere hardware especial, funciona en cualquier dispositivo conectado</p>
+                        <p><strong>Desventajas:</strong> Muy baja precisión, fácilmente evitable con VPN</p>
+                        <p><strong>Uso común:</strong> Publicidad dirigida, restricciones de contenido por región, análisis web</p>
+                    </div>
+
+                    <h3>6. Bluetooth Beacons</h3>
+                    <div class="highlight-box">
+                        <p><strong>📍 Descripción:</strong> Dispositivos pequeños que transmiten señales Bluetooth para localización de corto alcance.</p>
+                        <p><strong>Precisión:</strong> 1-5 metros</p>
+                        <p><strong>Ventajas:</strong> Alta precisión en interiores, bajo costo, bajo consumo</p>
+                        <p><strong>Desventajas:</strong> Alcance limitado (10-50 metros), requiere infraestructura instalada</p>
+                        <p><strong>Uso común:</strong> Marketing de proximidad, navegación indoor, museos y exposiciones</p>
+                    </div>
+
+                    <div class="highlight-box" style="margin-top: 2rem; border-left-color: var(--accent);">
+                        <h3>💡 Sistemas Híbridos</h3>
+                        <p>La mayoría de los dispositivos modernos combinan varios de estos métodos para lograr la mejor precisión posible. Por ejemplo, los smartphones utilizan GPS para exteriores, WiFi para interiores, y caen en triangulación celular cuando las otras opciones no están disponibles.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección Aplicaciones -->
+            <section id="aplicaciones" class="section">
+                <div class="content-card">
+                    <h2>5 Aplicaciones que Utilizan Geolocalización</h2>
+                    
+                    <p>La geolocalización ha transformado numerosas industrias y servicios. Aquí presentamos cinco aplicaciones populares que hacen uso intensivo de esta tecnología:</p>
+
+                    <div style="margin: 3rem 0;">
+                        <div class="app-card" style="margin-bottom: 2rem; text-align: left;">
+                            <div class="app-icon">🗺️</div>
+                            <h3 style="color: var(--primary);">1. Google Maps</h3>
+                            <p><strong>Tipo de geolocalización:</strong> GPS, A-GPS, WiFi, Datos celulares</p>
+                            <p><strong>Funcionalidades principales:</strong></p>
+                            <ul style="color: var(--text); line-height: 2;">
+                                <li>Navegación en tiempo real con instrucciones paso a paso</li>
+                                <li>Información de tráfico en vivo</li>
+                                <li>Búsqueda de lugares cercanos (restaurantes, gasolineras, hoteles)</li>
+                                <li>Street View para visualización de ubicaciones</li>
+                                <li>Compartir ubicación en tiempo real con contactos</li>
+                            </ul>
+                            <p><strong>Impacto:</strong> Más de 1 billón de kilómetros navegados anualmente por usuarios en todo el mundo.</p>
+                        </div>
+
+                        <div class="app-card" style="margin-bottom: 2rem; text-align: left;">
+                            <div class="app-icon">🚗</div>
+                            <h3 style="color: var(--primary);">2. Uber</h3>
+                            <p><strong>Tipo de geolocalización:</strong> GPS, A-GPS, Geolocalización celular</p>
+                            <p><strong>Funcionalidades principales:</strong></p>
+                            <ul style="color: var(--text); line-height: 2;">
+                                <li>Localización automática del usuario para solicitar viajes</li>
+                                <li>Rastreo en tiempo real del conductor</li>
+                                <li>Cálculo de rutas óptimas y tiempos de llegada</li>
+                                <li>Tarificación basada en distancia y tiempo</li>
+                                <li>Historial de viajes con ubicaciones</li>
+                            </ul>
+                            <p><strong>Impacto:</strong> Ha revolucionado el transporte urbano, facilitando más de 7.6 billones de viajes desde su creación.</p>
+                        </div>
+
+                        <div class="app-card" style="margin-bottom: 2rem; text-align: left;">
+                            <div class="app-icon">📸</div>
+                            <h3 style="color: var(--primary);">3. Instagram</h3>
+                            <p><strong>Tipo de geolocalización:</strong> GPS, WiFi, Geoetiquetado</p>
+                            <p><strong>Funcionalidades principales:</strong></p>
+                            <ul style="color: var(--text); line-height: 2;">
+                                <li>Geoetiquetado de fotos y videos</li>
+                                <li>Búsqueda de publicaciones por ubicación</li>
+                                <li>Stickers de ubicación en Stories</li>
+                                <li>Descubrimiento de contenido local</li>
+                                <li>Mapas interactivos de lugares visitados</li>
+                            </ul>
+                            <p><strong>Impacto:</strong> Más de 2 billones de fotos compartidas con geoetiquetas, promoviendo turismo y comercio local.</p>
+                        </div>
+
+                        <div class="app-card" style="margin-bottom: 2rem; text-align: left;">
+                            <div class="app-icon">🎮</div>
+                            <h3 style="color: var(--primary);">4. Pokémon GO</h3>
+                            <p><strong>Tipo de geolocalización:</strong> GPS, A-GPS, Realidad Aumentada</p>
+                            <p><strong>Funcionalidades principales:</strong></p>
+                            <ul style="color: var(--text); line-height: 2;">
+                                <li>Juego basado completamente en ubicación real del usuario</li>
+                                <li>Pokémon aparecen según la ubicación geográfica</li>
+                                <li>Gimnasios y Poképaradas en lugares reales</li>
+                                <li>Eventos regionales y Pokémon exclusivos por ubicación</li>
+                                <li>Seguimiento de distancia caminada para incubar huevos</li>
+                            </ul>
+                            <p><strong>Impacto:</strong> Pionero en juegos de realidad aumentada basados en ubicación, con más de 1 billón de descargas.</p>
+                        </div>
+
+                        <div class="app-card" style="margin-bottom: 2rem; text-align: left;">
+                            <div class="app-icon">🏃</div>
+                            <h3 style="color: var(--primary);">5. Strava</h3>
+                            <p><strong>Tipo de geolocalización:</strong> GPS de alta precisión</p>
+                            <p><strong>Funcionalidades principales:</strong></p>
+                            <ul style="color: var(--text); line-height: 2;">
+                                <li>Registro de rutas de ciclismo y carrera con GPS</li>
+                                <li>Análisis detallado de rendimiento y velocidad</li>
+                                <li>Segmentos competitivos basados en ubicación</li>
+                                <li>Mapas de calor mostrando rutas populares</li>
+                                <li>Compartir rutas y descubrir nuevos recorridos</li>
+                            </ul>
+                            <p><strong>Impacto:</strong> Más de 100 millones de atletas registrados, con más de 1 billón de actividades subidas.</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box" style="border-left-color: var(--accent);">
+                        <h3>🌟 Tendencia Común</h3>
+                        <p>Todas estas aplicaciones demuestran cómo la geolocalización ha pasado de ser una función auxiliar a convertirse en el núcleo fundamental de servicios que mejoran la vida cotidiana, facilitan la movilidad, fomentan la actividad física, conectan comunidades y crean nuevas formas de entretenimiento e interacción social.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección API -->
+            <section id="api" class="section">
+                <div class="content-card">
+                    <h2>¿Qué es una API?</h2>
+                    
+                    <p>Una <strong>API (Application Programming Interface)</strong> o Interfaz de Programación de Aplicaciones es un conjunto de definiciones y protocolos que permite que diferentes aplicaciones de software se comuniquen entre sí.</p>
+
+                    <div class="highlight-box">
+                        <h3>Definición Simple</h3>
+                        <p>Una API es como un <strong>camarero en un restaurante</strong>: tú (el cliente) solicitas algo del menú, el camarero lleva tu pedido a la cocina (el sistema), y luego te trae lo que pediste. La API es ese intermediario que facilita la comunicación.</p>
+                    </div>
+
+                    <h3>Componentes de una API</h3>
+                    <div class="app-grid">
+                        <div class="app-card">
+                            <div class="app-icon">📋</div>
+                            <h4>Endpoints</h4>
+                            <p>URLs específicas donde se pueden hacer solicitudes (ejemplo: /api/location)</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">📨</div>
+                            <h4>Métodos HTTP</h4>
+                            <p>GET (obtener), POST (crear), PUT (actualizar), DELETE (eliminar)</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">🔐</div>
+                            <h4>Autenticación</h4>
+                            <p>Claves API, tokens, OAuth para verificar identidad</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">📊</div>
+                            <h4>Respuestas</h4>
+                            <p>Datos devueltos en formato JSON o XML</p>
+                        </div>
+                    </div>
+
+                    <h3>APIs de Geolocalización Populares</h3>
+                    
+                    <div class="highlight-box">
+                        <h4>🗺️ Google Maps API</h4>
+                        <p><strong>Funcionalidades:</strong> Mapas interactivos, geocodificación, direcciones, Street View</p>
+                        <p><strong>Ejemplo de uso:</strong></p>
+                        <div style="background: rgba(5, 8, 20, 0.8); border: 1px solid var(--primary); border-radius: 10px; padding: 1rem; margin: 1rem 0; overflow-x: auto; font-family: 'Courier New', monospace; color: var(--primary); font-size: 0.9rem;">
+https://maps.googleapis.com/maps/api/geocode/json?address=Saltillo&key=
+                        </div>
+                        <p><strong>Caso de uso:</strong> Integrar mapas en sitios web y aplicaciones móviles</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h4>📍 Mapbox API</h4>
+                        <p><strong>Funcionalidades:</strong> Mapas personalizables, navegación, geocodificación</p>
+                        <p><strong>Ejemplo de uso:</strong></p>
+                        <div style="background: rgba(5, 8, 20, 0.8); border: 1px solid var(--primary); border-radius: 10px; padding: 1rem; margin: 1rem 0; overflow-x: auto; font-family: 'Courier New', monospace; color: var(--primary); font-size: 0.9rem;">
+https://api.mapbox.com/geocoding/v5/mapbox.places/Saltillo.json?access_token=
+                        </div>
+                        <p><strong>Caso de uso:</strong> Crear experiencias de mapa únicas con estilos personalizados</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h4>🌍 OpenStreetMap Nominatim API</h4>
+                        <p><strong>Funcionalidades:</strong> Geocodificación gratuita y de código abierto</p>
+                        <p><strong>Ejemplo de uso:</strong></p>
+                        <div style="background: rgba(5, 8, 20, 0.8); border: 1px solid var(--primary); border-radius: 10px; padding: 1rem; margin: 1rem 0; overflow-x: auto; font-family: 'Courier New', monospace; color: var(--primary); font-size: 0.9rem;">
+https://nominatim.openstreetmap.org/search?q=Arteaga+Coahuila&format=json
+                        </div>
+                        <p><strong>Caso de uso:</strong> Proyectos de código abierto y prototipado sin costo</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <h4>🛰️ Geolocation API del navegador</h4>
+                        <p><strong>Funcionalidades:</strong> Obtener ubicación del dispositivo desde el navegador</p>
+                        <p><strong>Ejemplo de uso:</strong></p>
+                        <div style="background: rgba(5, 8, 20, 0.8); border: 1px solid var(--primary); border-radius: 10px; padding: 1rem; margin: 1rem 0; overflow-x: auto; font-family: 'Courier New', monospace; color: var(--primary); font-size: 0.9rem;">
+navigator.geolocation.getCurrentPosition(function(position) {
+    console.log("Latitud: " + position.coords.latitude);
+    console.log("Longitud: " + position.coords.longitude);
+});
+                        </div>
+                        <p><strong>Caso de uso:</strong> Aplicaciones web que necesitan la ubicación del usuario</p>
+                    </div>
+
+                    <h3>Ventajas de usar APIs de Geolocalización</h3>
+                    <div class="app-grid">
+                        <div class="app-card">
+                            <div class="app-icon">⚡</div>
+                            <h4>Rapidez</h4>
+                            <p>Acceso instantáneo a servicios complejos sin desarrollarlos desde cero</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">💰</div>
+                            <h4>Economía</h4>
+                            <p>Ahorro en desarrollo y mantenimiento de infraestructura</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">🔄</div>
+                            <h4>Actualización</h4>
+                            <p>Los proveedores mantienen y mejoran constantemente el servicio</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">📈</div>
+                            <h4>Escalabilidad</h4>
+                            <p>Capacidad de manejar desde pequeños proyectos hasta millones de solicitudes</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box" style="margin-top: 2rem; border-left-color: var(--secondary);">
+                        <h3>💡 Consideraciones Importantes</h3>
+                        <p>Al usar APIs de geolocalización, es importante considerar: <strong>Límites de uso</strong> (muchas APIs tienen cuotas gratuitas limitadas), <strong>Privacidad</strong> (cumplir con regulaciones de protección de datos), <strong>Precisión</strong> (varía según el método y proveedor), <strong>Latencia</strong> (tiempo de respuesta de las solicitudes), y <strong>Costos</strong> (evaluar planes de pago según el volumen de uso).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección Generar Clave API -->
+            <section id="clave-api" class="section">
+                <div class="content-card">
+                    <h2>¿Cómo se Genera una Clave API?</h2>
+                    
+                    <p>Una <strong>clave API</strong> es un identificador único que autentica las solicitudes asociadas con tu proyecto para fines de uso, facturación y control de acceso. Aquí te explicamos el proceso general y casos específicos.</p>
+
+                    <div class="highlight-box">
+                        <h3>🔑 Proceso General para Generar una Clave API</h3>
+                        <p>Aunque cada proveedor tiene su propio proceso, estos son los pasos comunes:</p>
+                    </div>
+
+                    <h3>Pasos Universales</h3>
+                    <div class="app-grid">
+                        <div class="app-card">
+                            <div class="app-icon">1️⃣</div>
+                            <h4>Crear Cuenta</h4>
+                            <p>Regístrate en la plataforma del proveedor de la API</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">2️⃣</div>
+                            <h4>Verificar Identidad</h4>
+                            <p>Confirma tu email y proporciona información de pago (si es necesario)</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">3️⃣</div>
+                            <h4>Crear Proyecto</h4>
+                            <p>Establece un nuevo proyecto o aplicación en el dashboard</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">4️⃣</div>
+                            <h4>Generar Clave</h4>
+                            <p>Solicita la generación de una nueva clave API</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">5️⃣</div>
+                            <h4>Configurar Restricciones</h4>
+                            <p>Establece límites de dominio, IP o servicios</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">6️⃣</div>
+                            <h4>Implementar</h4>
+                            <p>Integra la clave en tu código de forma segura</p>
+                        </div>
+                    </div>
+
+                    <h3>📱 Ejemplo: Google Maps API</h3>
+                    <div class="highlight-box">
+                        <p><strong>Paso 1:</strong> Visita <span style="color: var(--primary);">console.cloud.google.com</span></p>
+                        <p><strong>Paso 2:</strong> Crea un nuevo proyecto o selecciona uno existente</p>
+                        <p><strong>Paso 3:</strong> Navega a "APIs y Servicios" → "Credenciales"</p>
+                        <p><strong>Paso 4:</strong> Haz clic en "Crear credenciales" → "Clave de API"</p>
+                        <p><strong>Paso 5:</strong> Copia tu clave API generada</p>
+                        <p><strong>Paso 6:</strong> Configura restricciones (recomendado):</p>
+                        <ul style="color: var(--text); line-height: 2; margin-left: 2rem;">
+                            <li>Restricción de aplicación (por dominio web, dirección IP o app)</li>
+                            <li>Restricción de API (limitar a servicios específicos)</li>
+                        </ul>
+                        <div style="background: rgba(5, 8, 20, 0.8); border: 1px solid var(--primary); border-radius: 10px; padding: 1rem; margin: 1rem 0; overflow-x: auto; font-family: 'Courier New', monospace; color: var(--primary); font-size: 0.9rem;">
+&lt;script src="https://maps.googleapis.com/maps/api/js?key=TU_CLAVE_API"&gt;&lt;/script&gt;
+                        </div>
+                    </div>
+
+                    <h3>🗺️ Ejemplo: Mapbox API</h3>
+                    <div class="highlight-box">
+                        <p><strong>Paso 1:</strong> Regístrate en <span style="color: var(--primary);">mapbox.com</span></p>
+                        <p><strong>Paso 2:</strong> Ve a tu panel de control (Dashboard)</p>
+                        <p><strong>Paso 3:</strong> En "Access tokens", encontrarás un token predeterminado</p>
+                        <p><strong>Paso 4:</strong> Para crear un nuevo token, haz clic en "Create a token"</p>
+                        <p><strong>Paso 5:</strong> Asigna un nombre y selecciona los alcances necesarios</p>
+                        <p><strong>Paso 6:</strong> Opcionalmente, restringe por URL</p>
+                        <div style="background: rgba(5, 8, 20, 0.8); border: 1px solid var(--primary); border-radius: 10px; padding: 1rem; margin: 1rem 0; overflow-x: auto; font-family: 'Courier New', monospace; color: var(--primary); font-size: 0.9rem;">
+mapboxgl.accessToken = 'TU_TOKEN_AQUI';
+const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11'
+});
+                        </div>
+                    </div>
+
+                    <h3>🌍 OpenStreetMap (Sin Clave)</h3>
+                    <div class="highlight-box">
+                        <p><strong>Ventaja:</strong> OpenStreetMap Nominatim no requiere clave API para uso básico</p>
+                        <p><strong>Limitación:</strong> Tiene límites estrictos de tasa de solicitudes (1 solicitud/segundo)</p>
+                        <p><strong>Recomendación:</strong> Para uso intensivo, se recomienda alojar tu propia instancia</p>
+                        <div style="background: rgba(5, 8, 20, 0.8); border: 1px solid var(--primary); border-radius: 10px; padding: 1rem; margin: 1rem 0; overflow-x: auto; font-family: 'Courier New', monospace; color: var(--primary); font-size: 0.9rem;">
+fetch('https://nominatim.openstreetmap.org/search?q=Saltillo&format=json')
+    .then(response => response.json())
+    .then(data => console.log(data));
+                        </div>
+                    </div>
+
+                    <h3>🔒 Mejores Prácticas de Seguridad</h3>
+                    <div class="app-grid">
+                        <div class="app-card">
+                            <div class="app-icon">🚫</div>
+                            <h4>No Expongas Claves</h4>
+                            <p>Nunca compartas claves en repositorios públicos o código del cliente</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">🔄</div>
+                            <h4>Rota Regularmente</h4>
+                            <p>Cambia tus claves API periódicamente</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">⚙️</div>
+                            <h4>Usa Variables de Entorno</h4>
+                            <p>Almacena claves en archivos .env no versionados</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">🎯</div>
+                            <h4>Restringe Alcance</h4>
+                            <p>Limita los servicios y dominios que pueden usar la clave</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">📊</div>
+                            <h4>Monitorea Uso</h4>
+                            <p>Revisa regularmente las estadísticas de uso</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">🔔</div>
+                            <h4>Configura Alertas</h4>
+                            <p>Establece notificaciones para uso inusual</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box" style="margin-top: 2rem; border-left-color: var(--accent);">
+                        <h3>⚠️ Advertencia Importante</h3>
+                        <p>Si tu clave API queda expuesta públicamente, revocarla inmediatamente y generar una nueva. Los atacantes pueden usar claves expuestas para consumir tu cuota de API, lo que podría resultar en cargos no autorizados o suspensión del servicio.</p>
+                    </div>
+
+                    <h3>💰 Consideraciones de Costos</h3>
+                    <p>La mayoría de los proveedores de APIs de geolocalización ofrecen:</p>
+                    <ul style="color: var(--text); font-size: 1.1rem; line-height: 2; margin-left: 2rem;">
+                        <li><strong>Nivel gratuito:</strong> Créditos mensuales gratuitos para comenzar (Google Maps ofrece $200/mes)</li>
+                        <li><strong>Modelo de pago por uso:</strong> Tarifas basadas en el número de solicitudes</li>
+                        <li><strong>Planes empresariales:</strong> Precios personalizados para alto volumen</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Sección Mapa -->
+            <section id="mapa" class="section">
+                <div class="content-card">
+                    <h2>Mapa Interactivo - Tu Ubicación en Tiempo Real</h2>
+                    
+                    <p>Descubre tu ubicación exacta en tiempo real o explora las principales ciudades de Coahuila. Haz clic en "MI UBICACIÓN ACTUAL" para ver dónde estás ahora mismo.</p>
+
+                    <div class="highlight-box">
+                        <h3>📍 Funciones del Mapa</h3>
+                        <p><strong>🎯 Mi Ubicación:</strong> Obtén tu ubicación GPS exacta con precisión en metros</p>
+                        <p><strong>🗺️ Ciudades de Coahuila:</strong> Explora Saltillo, Ramos Arizpe y Arteaga</p>
+                        <p><strong>🔍 Navegación:</strong> Usa zoom, arrastre y marcadores interactivos</p>
+                    </div>
+
+                    <div class="location-controls">
+                        <button class="location-btn current-location-btn" onclick="getCurrentPosition()">
+                            📍 MI UBICACIÓN ACTUAL
+                        </button>
+                        <button class="location-btn" onclick="showLocation(25.4232, -100.9931, 'Saltillo, Coahuila', 'Capital del estado de Coahuila, conocida por su producción automotriz y dulces típicos')">
+                            🏛️ Saltillo
+                        </button>
+                        <button class="location-btn" onclick="showLocation(25.5428, -100.9614, 'Ramos Arizpe, Coahuila', 'Ciudad industrial con importante actividad manufacturera y automotriz')">
+                            🏭 Ramos Arizpe
+                        </button>
+                        <button class="location-btn" onclick="showLocation(25.3833, -100.6167, 'Arteaga, Coahuila', 'Pueblo Mágico conocido como la Suiza de México, famoso por su producción de manzanas')">
+                            🍎 Arteaga
+                        </button>
+                    </div>
+
+                    <div id="map-container"></div>
+
+                    <div class="highlight-box" style="margin-top: 2rem;">
+                        <h3>ℹ️ Información del Mapa</h3>
+                        <p><strong>Tecnología:</strong> Este mapa utiliza Leaflet.js con tiles de OpenStreetMap y la API de Geolocalización del navegador</p>
+                        <p><strong>Precisión:</strong> La ubicación GPS tiene una precisión de ±5-50 metros dependiendo de las condiciones</p>
+                        <p><strong>Permisos:</strong> Debes permitir el acceso a tu ubicación cuando el navegador lo solicite</p>
+                        <p><strong>Navegación:</strong> Usa la rueda del mouse o los controles de zoom (+/-) para acercar/alejar. Arrastra para mover el mapa.</p>
+                    </div>
+
+                    <h3 style="margin-top: 3rem;">🌍 Ubicaciones de Coahuila Representadas</h3>
+                    <div class="app-grid">
+                        <div class="app-card">
+                            <div class="app-icon">🏛️</div>
+                            <h4>Saltillo</h4>
+                            <p>Capital del estado y centro político-administrativo</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">🏭</div>
+                            <h4>Ramos Arizpe</h4>
+                            <p>Polo industrial automotriz y manufacturero</p>
+                        </div>
+                        <div class="app-card">
+                            <div class="app-icon">🍎</div>
+                            <h4>Arteaga</h4>
+                            <p>Pueblo Mágico con atractivos naturales y turísticos</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p>&copy; 2026 GeoLocator - Tecnología de Geolocalización Avanzada</p>
+                <p style="margin-top: 0.5rem; font-size: 0.8rem;">Desarrollado con tecnologías web modernas | Mapas proporcionados por OpenStreetMap</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
